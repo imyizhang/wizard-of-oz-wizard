@@ -207,7 +207,7 @@ for message in messages:
         message["content"]
     )
 
-if len(messages) % 2 == 1:
+if messages and messages[-1]["role"] == "assistant":
     with st.chat_message("user", avatar=ROLE2AVATAR["user"]):
         with st.spinner("Typing ..."):
             # long polling

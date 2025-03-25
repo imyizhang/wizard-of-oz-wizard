@@ -94,7 +94,8 @@ with st.sidebar:
         [
             "Deep Research",
             "Web Search",
-            "Computer Use",
+            "File Search",
+            "Browser Use",
         ],
         default=["Web Search"],
         help="Select tools for the multi-agent system (MAS)",
@@ -216,7 +217,9 @@ for index, message in enumerate(messages):
             # write content
             if content == START:
                 st.write(SYMBOL2CONTENT[START])
-            elif content == END:
+            elif content.endswith(END):
+                if content[: -len(END)]:
+                    st.write(content[: -len(END)])
                 st.write(SYMBOL2CONTENT[END])
             else:
                 st.write(content)
@@ -225,7 +228,7 @@ for index, message in enumerate(messages):
             st.session_state[f"feedback_{index}"] = feedback
             if content == START:
                 pass
-            elif content == END:
+            elif content.endswith(END):
                 st.feedback("stars", key=f"feedback_{index}", disabled=True)
             else:
                 st.feedback("thumbs", key=f"feedback_{index}", disabled=True)
@@ -291,11 +294,18 @@ if response := st.chat_input():
                     label="Thoughts", state="complete", expanded=False
                 )
         # write content
-        st.write(content)
+        if content == START:
+            print("ERROR: Unexpected content")
+        elif content.endswith(END):
+            if content[: -len(END)]:
+                st.write(content[: -len(END)])
+            st.write(SYMBOL2CONTENT[END])
+        else:
+            st.write(content)
         # write feedback
         if content == START:
             print("ERROR: Unexpected content")
-        elif content == END:
+        elif content.endswith(END):
             st.feedback("stars", key=f"feedback_{index}", disabled=True)
         else:
             st.feedback("thumbs", key=f"feedback_{index}", disabled=True)
